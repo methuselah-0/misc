@@ -1,0 +1,55 @@
+#!/bin/bash
+
+array_test()
+{   #
+    echo "running array_test"
+    local -A First;
+    local -A Second=([key1]='one' [key2]='two' [key3]='three')
+    Second_String=`declare -p Second | f_get_Key-Val_To_Key-Val-String`
+    First=([something]=0)
+    First+=([second_string]=$Second_String)
+    declare -p First
+}
+
+f_do_Working_Examples()
+{   #  -> IO , [String] 
+    array_string=`f_get_Junk_Lines | f_get_Lines_To_Array-String`
+    echo "=================="
+    echo "Things which work"
+    echo "== An array_string: =="
+    echo "$array_string"
+    echo "=================="
+    echo "== f_get_Array-String_To_Lines \$array_string =="
+    f_get_Array-String_To_Lines "$array_string"
+    echo "=================="
+    echo "== cat text.txt =="
+    cat text.txt
+    echo "=================="
+    echo "== var=\`cat text | f_get_Lines_To_Array-String\` =="
+    echo "== echo \"\$var\" =="
+    var=`cat text.txt | f_get_Lines_To_Array-String`
+    echo "var: $var"
+    echo "=================="
+    echo "== f_get_Array-String_To_Lines \$var: =="
+    f_get_Array-String_To_Lines "$var"
+    echo "=================="
+    echo "== echo \`cat text.txt | f_get_Lines_To_Array-String\` | f_get_Array-String_To_Lines =="
+    f_get_Array-String_To_Lines "$(cat text.txt | f_get_Lines_To_Array-String)"
+    echo "=================="
+    echo "== f_get_Array-String_To_Lines \"\$var\" > text2.txt =="
+    f_get_Array-String_To_Lines "$var" > text2.txt
+    echo "`diff -s text.txt text2.txt`"
+    echo "=================="
+    echo "== cat text.txt | f_get_Lines_To_Array-String | f_get_Array-String_To_Lines =="
+    cat text.txt | f_get_Lines_To_Array-String | f_get_Array-String_To_Lines
+}
+
+# Stuff that doesn't work:
+f_do_Mistake_Examples()
+{   #  -> IO , [String]
+    echo "=================="
+    echo "Things which don't work"
+    echo "=================="
+    echo "no examples yet"
+}
+

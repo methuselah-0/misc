@@ -1,0 +1,43 @@
+#!/bin/bash
+declare -A array
+array[foo]=fooval
+array[bar]=barval
+
+printa ()
+{
+    #"${!array[@]}"
+    local -n arr=$1
+    #local idx=$2
+    #echo "${arr[$idx]}"
+    for i in "${!arr[@]}" ; do
+	echo "key  : $i"
+	echo "value: ${arr[$i]}"
+    done
+}
+declare -A days; days=([monday]=eggs [tuesday]=bread [sunday]=jam)
+printa "days" 
+printa "array"
+
+
+printvar() {
+    A1="ZZZ"
+    V1="A"
+    V2="1"
+    VARNAME="$V1$V2"
+    echo ${!VARNAME}
+}
+
+printvar2() {
+    A1="ZZZ"
+    V1="A"
+    V2="1"
+    VARNAME="$V1$V2"
+    eval VALUE=\$$VARNAME
+    echo $VALUE
+}
+echo "====================="
+printvar
+echo "====================="
+printvar2
+echo "====================="
+if `source arrayparser.sh --source-only` ; then echo "sourced true" ; exit 0 ; fi

@@ -1,0 +1,13 @@
+kkfasdf
+asdf
+asd
+	I have a leading tab
+asd	
+f
+f
+   f nothing """ Ä' '' 2 will be evaluated or interpreted except for what it is
+a
+sdf   '' ' '' ''  \ \\n \\n \n \n\n" " "" $ $$ \¡ \´ ´ ´´ 12 3
+d
+d
+I have a trailing tab d	

@@ -1,0 +1,19 @@
+#!/bin/bash
+#  Source: https://stackoverflow.com/questions/26634978/how-to-use-readarray-in-bash-to-read-lines-from-a-file
+#  Represent the following table in an associative array:
+#  1 2 3
+#  4 5 6
+#  7 8 9
+
+declare -A matrix
+function load() {
+    
+    a=( $2 )
+    for (( c=0; c < "${#a[@]"}; c++ ))
+    do
+	matrix[$1,$c]=${a[$c]}
+    done
+}
+# C=callback c=quantum sets number of lines per callback.
+readarray -C load -c 1 <<< $'1 2 3\n4 5 6\n7 8 9' 
+declare -p matrix

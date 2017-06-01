@@ -1,0 +1,119 @@
+#!/bin/bash
+
+f_Lines_To_Array_String()
+{   #  [String] -> Array-String
+    local -a arr=()
+    # read each input and add it to arr
+    while read -r line #  -r says to read every line as is, absolutely no modification of text.
+    do
+	#  Left : insert statement to the left, the hash gets number of elements=last index+1, i.e. last place in the array.
+	#  Right: * outer ' are for saying here's the element.
+	#         * " around $line is to preserve all whitespaces etc when the var is expanded.
+	#         * ' around "$line" says to read it exactly as is.
+	#         * Using " around '"$line"' creates actual quotes being part of the element.
+	#         * The "is junk" text is simply part of the string element that's inside the outer '.
+	#         * Use: arr[${#arr[@]}]='"'"$line"'" is junk'; if you want quotes around.
+	arr[${#arr[@]}]=''"$line"''; # no quotes.
+    done;
+    # output the array as a string in the "declare" representation
+    declare -p arr | sed -e 's/^declare -a [^=]*=//'
+}
+
+
+makeJunk()
+{
+    echo 'this is junk'
+    echo '#more junk \n and "b@d" characters!'
+    echo '!#$^%^&(*)_^&% ^$#@:"<>?/.,\\""'
+    echo "We still can't put ' and \" in the text how we want when using echo"
+    echo "read -r still works if it's in a txt-file."
+    echo "We might be able to put text freely inside echo if we temporarily edit the IFS to use the null-delimiter"
+}
+
+#makeArray()
+#{   #  Array-Name Array-String -> Var-Set
+#    local -n arr=$1
+#    eval "arr=${!$2}"
+#}
+
+f_Print_Array-String_To_Lines()
+{   #  Array-String -> IO
+    # This seems to be necessary for now.
+    #local arr1="$1" && declare -a returned_array=${arr1}  # is enough
+    #export arrayvar
+    local arg1="$1" && local -a arr1=${arg1}  # is enough
+
+#eval "let a=`makeJunk | f_Lines_To_Array-String`; declare -a returned_array=${a}; unset a"
+
+#echo" the returned string looks like: $returned_string"
+    for junk in "${arr1[@]}"
+    do
+	echo "$junk"
+    done
+}
+
+# Function for sending a var and an Array-String which puts the array-string in the var.
+# myArray()
+# {    #  String Array-String -> Set-IO
+
+
+#eval "declare -a returned_array=${array_string}" # eval is superflous    
+#returned_array=${array_string} # is not enough
+array_string=`makeJunk | f_Lines_To_Array-String`
+echo "the array_string: $array_string"
+echo "=================="
+echo "f_Print_Array-String_To_Lines \$array_string"
+f_Print_Array-String_To_Lines "$array_string"
+echo "=================="
+echo "== cat text.txt =="
+cat text.txt
+echo "=================="
+echo "== echo text.txt | f_Lines_To_Array-String | f_Print_Array-String_To_Lines =="
+echo text.txt | f_Lines_To_Array-String | f_Print_Array-String_To_Lines
+echo "=================="
+echo "== var=\`cat text | f_Lines_To_Array-String\` =="
+var=`cat text.txt | f_Lines_To_Array-String`
+echo "var: $var"
+echo "=================="
+echo "f_Print_Array-String_To_Lines \$var:"
+f_Print_Array-String_To_Lines "$var" > text2.txt
+echo "=================="
+
+echo "`diff -s text.txt text.txt`"
+
+#  Alternating Key-Value as lines in text is a way to store associative arrays.
+f_Alt_Lines_To_Key_Val()
+{   # IA-ref IA-ref [String] -> Ref-Set Ref-Set
+    local -i i=0
+    local -n arr1=$1
+    local -n arr2=$2
+    while IFS= read -r $3 ; do # no need to restore IFS.
+	if [ i=0 ] ; then
+	    line=$REPLY
+	    i=1
+	elif [ i=1 ] ; then
+	    line=$REPLY
+	    
+	    i=0
+	fi
+    done; # < text.txt
+}
+
+f_set_To_Array() { # Idea is that passed variable is a reference to an array, then the function can operate on it by declaring a local name-reference variable.
+    local -n arr=$1
+}
+
+#arr=('my' 'array')
+#declare -A arr2; arr2=(["key1"]="val1" ["key2"]="val2")
+#declare -p $arr
+#declare -p $arr2
+
+#  Consider: Always use export statement for array variable immediately prior to calling an array function which then uses "local -n arr=$1"
+
+
+# Problem: how to pass array around arrays - a string format? namereferences?
+    # 1. for NUL-delimited streams etc. http://mywiki.wooledge.org/BashFAQ/005#Reading_NUL-delimited_streams
+    # 2. Since Bash 4.3-alpha, read skips any NUL (ASCII code 0) characters in input. http://wiki.bash-hackers.org/commands/builtin/read
+    # 3. printf -v http://mywiki.wooledge.org/BashFAQ/006
+    # 4. Array formats can perhaps be read with declare -p ouput. Considerdeclare -a and declare -p something for passing around "array-formatted" strings. Would like to pipe it. 
+
