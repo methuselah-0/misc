@@ -12,8 +12,8 @@ installDependencies(){
     make ; make install; cd ..
 }
 addUser(){
-adduser --system --home /var/lib/gnunet --group --disabled-password gnunet
-addgroup --system gnunetdns
+    adduser --system --home /var/lib/gnunet --group --disabled-password gnunet
+    addgroup --system gnunetdns
 }
 
 install(){
@@ -43,11 +43,18 @@ EOF
 }
 
 main(){
-    #installDependencies
-    #addUser
-    #install
+    installDependencies
+    addUser
+    install
     createConf
     sudo -u gnunet /bin/bash -c gnunet-arm -c /etc/gnunet.conf -s &
 }
 main
-echo "to allow more than user gnunet to use the services run \"adduser \$some_user gnunet\""
+echo "To allow more than user gnunet to use the services run \"adduser \$some_user gnunet\"."
+echo "You have to logout and login again for that to take effect."
+echo "You can start and stop your GNUnet with:"
+echo "Start:
+echo "su -s /bin/bash - gnunet"
+echo "gnunet-arm -c /etc/gnunet.conf -s &"
+echo "Stop:"
+echo "gnunet-arm -e"
