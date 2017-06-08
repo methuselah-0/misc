@@ -35,7 +35,7 @@ USER_ONLY = NO
 EOF
 }
 userConf(){
-cat <<EOF > /home/$username/.config/gnunet.conf
+cat <<EOF > /home/"$username"/.config/gnunet.conf
 [arm]
 SYSTEM_ONLY = YES
 USER_ONLY = NO
@@ -43,18 +43,28 @@ EOF
 }
 
 main(){
-    installDependencies
-    addUser
-    install
-    createConf
-    sudo -u gnunet /bin/bash -c gnunet-arm -c /etc/gnunet.conf -s &
+    if [[ `id -u` -ne 0 ]] ; then echo 'Please run me as root or "sudo ./install-devuan.sh"' ; exit 1 ; fi
+    read -p "Your username? " ;
+    username=$REPLY && continue
+    usergroup=$REPLY && continue
+    read -p "Your user group? (leave empty for same as user) " ;
+    if [[ -n $REPLY ]] ; then
+	usergroup=$REPLY
+    fi
+    echo "$username"
+    echo "$usergroup"
+    #installDependencies
+    #addUser
+    #install
+    #createConf
+    #sudo -u gnunet /bin/bash -c gnunet-arm -c /etc/gnunet.conf -s &
+    echo "To allow more than user gnunet to use the services run \"adduser \$some_user gnunet\"."
+    echo "You have to logout and login again for that to take effect."
+    echo "You can start and stop your GNUnet with:"
+    echo "Start:"
+    echo "su -s /bin/bash - gnunet"
+    echo "gnunet-arm -c /etc/gnunet.conf -s &"
+    echo "Stop:"
+    echo "gnunet-arm -e"
 }
 main
-echo "To allow more than user gnunet to use the services run \"adduser \$some_user gnunet\"."
-echo "You have to logout and login again for that to take effect."
-echo "You can start and stop your GNUnet with:"
-echo "Start:
-echo "su -s /bin/bash - gnunet"
-echo "gnunet-arm -c /etc/gnunet.conf -s &"
-echo "Stop:"
-echo "gnunet-arm -e"
