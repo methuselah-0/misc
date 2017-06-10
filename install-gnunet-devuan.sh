@@ -49,16 +49,16 @@ EOF
 }
 
 makeStartScript(){
-cat <<EOF
+cat <<EOF > /var/lib/gnunet/gnunet-start.sh
 #!/bin/bash
-COUNTER=0
+declare -i COUNTER=0
 TIMER=480 # seconds
 while [ $COUNTER -lt 1000 ] ; do
     gnunet-arm -c /etc/gnunet.conf -s
         echo "This is restart number: ${COUNTER}"
         echo "The restart timer is set to: $TIMER"
         sleep 600
-        COUNTER++
+        COUNTER+=1
         if pgrep -f gnunet-service-arm ; then gnunet-arm -e ; fi
         sleep 1
         if pgrep -f gnunet-service-arm ; then killall gnunet-service-arm ; fi
