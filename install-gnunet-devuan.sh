@@ -48,14 +48,31 @@ EOF
     echo "You have to logout and login again for this user to use gnunet."
 }
 
+makeStartScript(){
+cat <<EOF
+#!/bin/bash
+COUNTER=0
+TIMER=480 # seconds
+while [ $COUNTER -lt 1000 ] ; do
+    gnunet-arm -c /etc/gnunet.conf -s
+        echo "This is restart number: ${COUNTER}"
+        echo "The restart timer is set to: $TIMER"
+        sleep 600
+        COUNTER++
+        if pgrep -f gnunet-service-arm ; then gnunet-arm -e ; fi
+        sleep 1
+        if pgrep -f gnunet-service-arm ; then killall gnunet-service-arm ; fi
+done
+EOF
+
 main(){
     if [[ `id -u` -ne 0 ]] ; then echo 'Please run me as root or "sudo ./install-devuan.sh"' ; exit 1 ; fi
     installDependencies
     install
     createConf
     read -p "Right now only the users gnunet and root can use gnunet. Would you like to let a regular user use gnunet? (recommended) (y/n) "
-    if [[ $REPLY = y ]] ; then addUser ; fi    
-    sudo -u gnunet /bin/bash -c gnunet-arm -c /etc/gnunet.conf -s &
+    if [[ $REPLY = y ]] ; then addUser ; fi
+    makeStartScript
     echo "You can start and stop your GNUnet with:"
     echo "**Start**"
     echo "  su -s /bin/bash - gnunet"
