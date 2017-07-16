@@ -64,6 +64,7 @@ while [ $COUNTER -lt 1000 ] ; do
         if pgrep -f gnunet-service-arm ; then killall gnunet-service-arm ; fi
 done
 EOF
+}
 
 main(){
     if [[ `id -u` -ne 0 ]] ; then echo 'Please run me as root or "sudo ./install-devuan.sh"' ; exit 1 ; fi
