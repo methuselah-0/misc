@@ -1,7 +1,7 @@
 set -e
 
 installDependencies(){
-    apt-get install gcc make python-zbar libltdl-dev libsqlite3-dev libunistring-dev libopus-dev libpulse-dev openssl libglpk-dev texlive libidn11-dev libmysqlclient-dev libpq-dev libarchive-dev libbz2-dev libflac-dev libgif-dev libglib2.0-dev libgtk-3-dev libmpeg2-4-dev libtidy-dev libvorbis-dev libogg-dev zlib1g-dev g++ gettext libgsf-1-dev libunbound-dev libqrencode-dev libgladeui-dev nasm texlive-latex-extra libunique-3.0-dev gawk miniupnpc libfuse-dev libbluetooth-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev nettle-dev libextractor-dev libgcrypt20-dev libmicrohttpd-dev sqlite3
+    apt-get install gcc make python-zbar libltdl-dev libsqlite3-dev libunistring-dev libopus-dev libpulse-dev openssl libglpk-dev texlive libidn11-dev libmysqlclient-dev libpq-dev libarchive-dev libbz2-dev libflac-dev libgif-dev libglib2.0-dev libgtk-3-dev libmpeg2-4-dev libtidy-dev libvorbis-dev libogg-dev zlib1g-dev g++ gettext libgsf-1-dev libunbound-dev libqrencode-dev libgladeui-dev nasm texlive-latex-extra libunique-3.0-dev gawk miniupnpc libfuse-dev libbluetooth-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev nettle-dev libextractor-dev libgcrypt20-dev libmicrohttpd-dev sqlite3 git automake autoconf
     wget ftp://ftp.gnutls.org/gcrypt/gnutls/v3.3/gnutls-3.3.12.tar.xz
     wget https://gnunet.org/sites/default/files/gnurl-7.40.0.tar.bz2
     tar xvf gnutls-3.3.12.tar.xz
@@ -57,13 +57,14 @@ while [ $COUNTER -lt 1000 ] ; do
     gnunet-arm -c /etc/gnunet.conf -s
         echo "This is restart number: ${COUNTER}"
         echo "The restart timer is set to: $TIMER"
-        sleep 600
+        sleep $TIMER
         COUNTER+=1
         if pgrep -f gnunet-service-arm ; then gnunet-arm -e ; fi
         sleep 1
         if pgrep -f gnunet-service-arm ; then killall gnunet-service-arm ; fi
 done
 EOF
+}
 
 main(){
     if [[ `id -u` -ne 0 ]] ; then echo 'Please run me as root or "sudo ./install-devuan.sh"' ; exit 1 ; fi
