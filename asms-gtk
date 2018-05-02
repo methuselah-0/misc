@@ -1,0 +1,8 @@
+#!/run/current-system/profile/bin/bash
+ if ! ifconfig | grep tap0
+ then
+     ./qemu-ifup "$$" "br0" "tap0" "user1" \
+		 && \
+		 qemu-system-x86_64 -drive file=ASMS\ Demo\ 6.11-disk1.vmdk -boot c -m 6G -cpu host --enable-kvm -name ASMS\ Demo -uuid 564d8fa4-30b3-a240-7ca5-c5099444caf2 -netdev tap,ifname=tap0,id=mynet0,script=no -device e1000,netdev=mynet0,mac=00:0C:29:44:CA:F2
+      fi
+#./qemu-ifdown
